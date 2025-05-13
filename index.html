@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wxx的部分项目展示</title>
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #1e90ff;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+
+        .project-item {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .media-container {
+            position: relative;
+            padding-top: 56.25%;
+            background: #e6f3ff;
+        }
+
+        .media-container img,
+        .media-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .project-info {
+            padding: 15px;
+        }
+
+        .project-info h3 {
+            color: #1e90ff;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background-color: #1e90ff;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90vh;
+            position: relative;
+            cursor: zoom-out;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -40px;
+            right: -10px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            background: rgba(30, 144, 255, 0.9);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+
+        /* 新修改灯箱内容样式 */
+        .lightbox-content {
+            max-width: 90vw;  /* 使用视口单位 */
+            max-height: 90vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 新增媒体元素容器样式 */
+        .lightbox-media-container {
+            max-width: 100%;
+            max-height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 调整媒体元素样式 */
+        .lightbox img,
+        .lightbox video {
+            max-width: 100%;
+            max-height: 80vh;
+            width: auto;
+            height: auto;
+            object-fit: contain; /* 保持原始比例 */
+            border-radius: 8px;
+            background: #000;
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <h1>我的部分项目展示</h1>
+    <p>点击项目查看详细信息</p>
+</header>
+
+<div class="container">
+    <div class="gallery">
+        <!-- 项目1 - 图片 -->
+        <div class="project-item">
+            <div class="media-container">
+                <img src="bigscreen.png" alt="项目1预览" class="zoomable">
+            </div>
+            <div class="project-info">
+                <h3>离线数仓可视化展示</h3>
+                <p>搭建完数仓后，也可使用可视化工具，进行可视化展示，可选择不同的图表去展现需要观察的指标，鼠标放上去以后还可以出现详细数据展示。</p>
+            </div>
+        </div>
+
+        <!-- 项目2 - 视频 -->
+        <div class="project-item">
+            <div class="media-container">
+                <video controls class="zoomable">
+                    <source src="Excel周报制作.mp4" type="video/mp4">
+                    您的浏览器不支持视频播放
+                </video>
+            </div>
+            <div class="project-info">
+                <h3>Excel周报</h3>
+                <p>使用Excel高级函数与源数据联动，实现周报制作，更好的达到数据可视化。</p>
+            </div>
+        </div>
+        <!---->
+
+
+    </div>
+</div>
+
+<!-- 新增灯箱结构 -->
+<div class="lightbox" id="lightbox">
+    <span class="close-btn">&times;</span>
+    <div class="lightbox-content">
+        <!-- 动态插入媒体内容 -->
+    </div>
+</div>
+
+<script>
+    // 单一JavaScript实现
+    const lightbox = document.getElementById('lightbox');
+    const closeBtn = document.querySelector('.close-btn');
+
+    document.querySelectorAll('.zoomable').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.stopPropagation();
+
+            // 创建包裹容器
+            const mediaWrapper = document.createElement('div');
+            mediaWrapper.style.position = 'relative';
+
+            // 克隆媒体元素
+            const clone = this.cloneNode(true);
+            if (clone.tagName === 'VIDEO') {
+                clone.controls = true;
+                clone.play();
+            }
+
+            // 创建关闭层
+            const closeLayer = document.createElement('div');
+            closeLayer.className = 'close-layer';
+            closeLayer.addEventListener('click', closeLightbox);
+
+            // 组装元素
+            mediaWrapper.appendChild(clone);
+            mediaWrapper.appendChild(closeLayer);
+
+            // 插入灯箱
+            lightbox.querySelector('.lightbox-content').innerHTML = '';
+            lightbox.querySelector('.lightbox-content').appendChild(mediaWrapper);
+            lightbox.classList.add('active');
+        });
+    });
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        const video = lightbox.querySelector('video');
+        if (video) {
+            video.pause();
+            video.currentTime = 0;
+        }
+    }
+
+    // 绑定关闭事件
+    closeBtn.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => e.target === lightbox && closeLightbox());
+    document.addEventListener('keydown', e => e.key === 'Escape' && closeLightbox());
+
+</script>
+
+<footer>
+    <p>© 2025 Wxx的部分项目展示.Thank you for your click and viewing.</p>
+</footer>
+</body>
+</html>
